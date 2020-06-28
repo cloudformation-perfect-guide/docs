@@ -4,11 +4,11 @@ module.exports = {
   title: "CloudFormation 完全ガイド",
   tagline:
     "AWS CloudFormation 完全ガイドでは、AWS CloudFormation を使用したインフラリソースのプロビジョニングに関するTipsをまとめ、ベストプラクティスとして形式化します。",
-  url: "https://github.com/cloudformation-perfect-guide/docs",
+  url: "https://cloudformation-perfect-guide.netlify.com",
   baseUrl: "/",
   favicon: "img/favicon.png",
   organizationName: "cloudformation-perfect-guide",
-  projectName: "cloudformation-perfect-guide",
+  projectName: "docs",
   themeConfig: {
     navbar: {
       title: "CloudFormation 完全ガイド",
