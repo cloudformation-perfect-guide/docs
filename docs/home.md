@@ -1,0 +1,19 @@
+---
+id: home
+title: CloudFormation 完全ガイド
+sidebar_label: CloudFormation 完全ガイド
+---
+
+CloudFormation 完全ガイドでは、AWS CloudFormation を使用したインフラリソースのプロビジョニングに関する Tips をまとめ、ベストプラクティスとして形式化します。
+
+## Contribute
+
+お気づきの点について Issue や PR を送って頂けると大変幸いです。些細なものでも歓迎いたします。
+
+例:
+
+- ベストプラクティスと考えられるページを追記する
+- 誤記、タイプミスを修正する
+- 理解しやすい日本語に修正する
+- 用語を統一する(用語集が必要かもしれません)
+- 上記を Issue によって指摘する
