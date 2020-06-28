@@ -1,4 +1,4 @@
-const githubUrl = "https://github.com/cloudformation-perfect-guide/docs";
+const githubUrl = "https://github.com/cloudformation-perfect-guide";
 
 module.exports = {
   title: "CloudFormation 完全ガイド",
@@ -10,6 +10,7 @@ module.exports = {
   organizationName: "cloudformation-perfect-guide",
   projectName: "docs",
   themeConfig: {
+    image: "img/home.png",
     navbar: {
       title: "CloudFormation 完全ガイド",
       logo: {
@@ -37,12 +38,8 @@ module.exports = {
           title: "Docs",
           items: [
             {
-              label: "Style Guide",
+              label: "Home",
               to: "docs/",
-            },
-            {
-              label: "Second Doc",
-              to: "docs/doc2/",
             },
           ],
         },
@@ -50,16 +47,12 @@ module.exports = {
           title: "Community",
           items: [
             {
-              label: "Stack Overflow",
-              href: "https://stackoverflow.com/questions/tagged/docusaurus",
-            },
-            {
-              label: "Discord",
-              href: "https://discordapp.com/invite/docusaurus",
-            },
-            {
               label: "Twitter",
-              href: "https://twitter.com/docusaurus",
+              href: "https://twitter.com/gee0awa",
+            },
+            {
+              label: "Slack",
+              href: "https://slack.com/todo",
             },
           ],
         },
@@ -83,7 +76,8 @@ module.exports = {
         docs: {
           homePageId: "home",
           sidebarPath: require.resolve("./sidebars.js"),
-          editUrl: "https://github.com/cloudformation-perfect-guide/docs",
+          editUrl:
+            "https://github.com/cloudformation-perfect-guide/docs/edit/master",
         },
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
