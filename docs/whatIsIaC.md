@@ -1,5 +1,5 @@
 ---
-id: whatIsIaC
+id: whatisiac
 title: Infrastructure as Code とは
 sidebar_label: Infrastructure as Code とは
 ---
