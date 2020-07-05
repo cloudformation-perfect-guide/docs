@@ -9,8 +9,8 @@ import useBaseUrl from "@docusaurus/useBaseUrl";
 CloudFormation 完全ガイドでは、AWS CloudFormation を使用したインフラリソースのプロビジョニングに関する Tips をまとめ、ベストプラクティスとして形式化します。
 
 <img
-  alt="home"
-  src={useBaseUrl("img/home.png")}
+alt="home"
+src={useBaseUrl("img/home.png")}
 />
 
 ## Contribute
