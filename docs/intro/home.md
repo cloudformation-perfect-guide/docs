@@ -1,0 +1,26 @@
+---
+id: home
+title: CloudFormation Perfect Guild
+sidebar_label: Introduction
+---
+
+import useBaseUrl from "@docusaurus/useBaseUrl";
+
+CloudFormation 完全ガイドでは、AWS CloudFormation を使用したインフラリソースのプロビジョニングに関する Tips をまとめ、ベストプラクティスとして形式化します。
+
+<img
+alt="home"
+src={useBaseUrl("img/home.png")}
+/>
+
+## Contribute
+
+お気づきの点について Issue や PR を送って頂けると大変幸いです。些細なものでも歓迎いたします。
+
+例:
+
+- ベストプラクティスと考えられるページを追記する
+- 誤記、タイプミスを修正する
+- 理解しやすい日本語に修正する
+- 用語を統一する(用語集が必要かもしれません)
+- 上記を Issue によって指摘する

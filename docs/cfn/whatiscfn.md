@@ -1,7 +1,7 @@
 ---
 id: whatiscfn
-title: AWS CloudFormation とは
-sidebar_label: AWS CloudFormation とは
+title: AWS CloudFormationとは
+sidebar_label: AWS CloudFormationとは
 ---
 
 ## (WIP) 骨子
@@ -9,6 +9,7 @@ sidebar_label: AWS CloudFormation とは
 実践レベルで特によく使用する項目についてまとめる
 
 - 概要
+  - xxx
 - チュートリアル
   - xxx
 - テンプレートの基礎
@@ -28,6 +29,7 @@ sidebar_label: AWS CloudFormation とは
   - PullRequest 毎、コミット毎に change set を作成し、プレビューする
 
 - 継続的デリバリー
+
   - 各種 CI ツールとの連携
     - CircleCI
     - GitHub Action
@@ -38,3 +40,7 @@ sidebar_label: AWS CloudFormation とは
       - Mapping にベタ書きする
   - 障害や有事の際の考慮
   - ドリフト対策
+
+- レシピ集
+  - ALB 配下に EC2 を配置し、Web アクセスが可能な nginx をインストールする。
+  - etc...
