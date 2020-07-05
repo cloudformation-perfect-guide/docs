@@ -1,0 +1,389 @@
+---
+id: test
+title: テストを記述する
+sidebar_label: テストを記述する
+---
+
+import useBaseUrl from "@docusaurus/useBaseUrl";
+
+インフラを CloudFormation のテンプレートとして記述することができるようになり、デプロイする前からある程度インフラの品質を保証できるようになりました。
+強力でバランスがとれた自動テストを導入して、インフラリソースを継続的にデリバリーする準備を整えましょう。
+
+この章で紹介する CloudFormation におけるテストの方法は以下の３点です。
+
+1. **Linter による静的構文解析** <br/>
+   YAML または JSON で記述されたテンプレートファイルが決められたポリシーに従っているかを検証する。
+
+2. **変更セットによる検証** <br/>
+   変更セットが作成されるか検証する。
+
+3. **別リージョンへのデプロイ** <br/>
+   別リージョンに全く同じ構成でデプロイができるか検証する。
+
+:::note CloudFormation はクラウドリソースをどのレイヤーまで作成するか
+
+本ガイドでは、CloudFormation は EC2 の内部の OS/ミドルウェアまでは管理しない方針としており、いわゆる Serverspec などの自動テストとは異なる視点のテストを実践します。
+もちろん CloudFormation を使用しても EC2 の UserData を記述することで、OS/ミドルウェア の設定も行うことができます。ただ、OS 内部の設定の場合は、Ansible や Chef などのツールを使用する方がより適切な場合が多いでしょう。
+
+:::
+
+## 1. Linter による静的構文解析
+
+### cfn-python-lint による文法チェック
+
+<img
+  width="100px"
+  src="https://github.com/aws-cloudformation/cfn-python-lint/raw/master/logo.png?raw=true"
+  alt="cfn-python-lint"
+/>
+
+まず手始めに、テンプレートに記述された Key や Value が正しい形式かどうか確認するために、[cfn-python-lint](https://github.com/aws-cloudformation/cfn-python-lint) を導入しましょう。
+CloudFormation の Linter には、JavaScript 製の [cfn-lint](https://github.com/martysweet/cfn-lint)と Python
+製の [cfn-python-lint](https://github.com/aws-cloudformation/cfn-python-lint) があります。
+2020 年 7 月時点では、Python 製の cfn-python-lint が開発の盛んでスタンダードな位置付けにあります。
+aws cli には[テンプレートの検証コマンド](https://docs.aws.amazon.com/ja_jp/AWSCloudFormation/latest/UserGuide/using-cfn-validate-template.html) も用意されていますが、より詳細に構文エラーを示すには Linter を使用すると良いです。
+
+#### cfn-python-lint のインストール
+
+cfn-python-lint は pip または macOS の場合は brew を使用してインストールできます。
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+<Tabs
+defaultValue="pip"
+values={[{ label: "pip", value: "pip" },{ label: "macOS", value: "macOS" }]}
+>
+  <TabItem value="pip">
+
+```bash
+$ pip install cfn-python-lint
+```
+
+  </TabItem>
+  <TabItem value="macOS">
+
+```bash
+$ brew install cfn-python-lint
+```
+
+  </TabItem>
+</Tabs>
+
+さらに、Docker としても提供されており、環境を汚したくない場合に有用です。
+GitHub リポジトリからソースを Clone してから、ローカルで Docker イメージをビルドします。
+
+```bash
+# GitHub からソースを Clone する
+$ git clone https://github.com/aws-cloudformation/cfn-python-lint.git
+# ソースのあるディレクトリに移動する
+$ cd cfn-python-lint
+# Docker イメージをビルドする
+$ docker build --tag cfn-python-lint:latest .
+```
+
+以下コマンドでは、カレントディレクトリに配置している `./data` ディレクトリ配下にある `template.yaml` に対して Linter を実行しています。
+
+```bash
+$ docker run --rm -v `pwd`:/data cfn-python-lint:latest /data/template.yaml
+```
+
+#### エディタプラグイン
+
+cfn-python-lint は コマンドラインで実行しても有効ですが、各種エディタのプラグインとして使用することでさらに威力を発揮します。
+
+- [Atom](https://atom.io/packages/atom-cfn-lint)
+- [Emacs](https://www.emacswiki.org/emacs/CfnLint)
+- NeoVim 0.2.0+/Vim 8
+  - [ALE](https://github.com/w0rp/ale#supported-languages)
+  - [Coc](https://github.com/joenye/coc-cfn-lint)
+  - [Syntastic](https://github.com/speshak/vim-cfn)
+- [Sublime](https://packagecontrol.io/packages/SublimeLinter-contrib-cloudformation)
+- [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=kddejong.vscode-cfn-lint)
+- [IntelliJ IDEA](https://plugins.jetbrains.com/plugin/10973-cfn-lint)
+
+#### CI との統合
+
+cfn-python-lint を各種 CI サービスで実行しましょう。
+
+<Tabs
+defaultValue="CircleCI"
+values={[{ label: "CircleCI", value: "CircleCI" },{ label: "GitHub Action", value: "github" }]}
+>
+  <TabItem value="CircleCI">
+
+シンプルに作成するのであれば以下で十分でしょう。必要に応じてキャッシュを検討するとより高速に実行できます。
+
+```yml title=".circleci/config.yml"
+version: 2.1
+jobs:
+  cfn-lint:
+    docker:
+      - image: circleci/python:latest
+    working_directory: ~/work
+    steps:
+      - checkout
+      - run: sudo pip install cfn-lint
+      - run: cfn-lint template.yml
+workflows:
+  workflow:
+    jobs:
+      - cfn-lint
+```
+
+また、[CircleCI の Orbs](https://circleci.com/orbs/registry/orb/fatlama/cfn-lint) を使用するとより簡単に記述することもできます。
+
+  </TabItem>
+  <TabItem value="github">
+
+TODO...
+
+  </TabItem>
+</Tabs>
+
+### cfn-nag によるセキュリティポリシーチェック
+
+<img
+  height="100px"
+  src="https://github.com/stelligent/cfn_nag/raw/master/logo.png?raw=true"
+  alt="cfn-nag"
+/>
+
+CloudFormation を使用することで、AWS のリソースを素早くプロビジョニングできるようになりました。
+また、yaml 形式のテンプレートファイルで記述することにより、インフラ開発者はどのリソースが作成されるのかを宣言的に管理できます。
+開発者は AWS リソースをすばやく簡単に作成できるようになりましたが、裏を返せば安全でないリソースもすばやく作成できてしまうことになります。
+「安全でない」とは、TCP ポートを世界中に公開したり、特定の IAM ユーザーにフル権限を与えてしまうことでセキュリティ的に問題があるリソースを作り出してしまうことを意味しています。
+
+cfn-nag を使用することでセキュリティ的に問題があったり、命名規則に従っていないリソースに対して警告できます。
+このようにポリシー違反を検知する仕組みを作ることで、AWS リソースを構築する前にセキュリティ的な問題に対応できるようになります。
+
+#### cfn-nag のインストール
+
+cfn-nag は Ruby 製のツールです。Gem をインストールしましょう。
+
+```bash
+$ gem install cfn-nag
+```
+
+#### エディタプラグイン
+
+cfn-nag にも各種エディタプラグインがあります。
+
+- [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=eastman.vscode-cfn-nag)
+
+#### CI との統合
+
+CircleCI の場合、以下のような設定を記述します。
+
+```yaml title=".circleci/config.yml"
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/ruby:2.6.0-node-browsers-legacy
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run: gem install cfn-nag
+      - run: cfn_nag template.yaml
+```
+
+### テストコードによる静的構文解析
+
+cfn-python-lint や cfn-nag を使用することで、テンプレートの品質をある程度保証することができました。
+しかしながら、チームにおける共通の規約や規則など守るためには、このようなツールでは不十分です。
+
+例えば、
+
+- Lambda 関数の定義には、必ず関数名（FunctionName）と説明文（description）を記述すること
+- ALB のリソース名の末尾は `-alb` で終わること
+- IAM Policy には `*` を極力使わないこと
+
+などのように、チーム内で規則を設けている場合があるかと思います。
+このような規約に対して、違反を自動的に検知する仕組みがあると便利です。
+
+#### Jest を使用した実装例
+
+<img
+  height="100px"
+  src="https://jestjs.io/img/jest.svg"
+  alt="cfn-python-lint"
+/>
+
+インフラストラクチャーを管理する場合、**命名規則を決めてリソースを作ること** のような規約を組織で作っていることがあるかもしれません。
+例えば、`AWS::Serverless::Function` の `FunctionName` プロパティは記述せずとも AWS リソースを作成することができますが、
+識別するために名前を明記しておいた方が無難なケースが多いでしょう。Description もまた同様です。
+テストコードを記述しておくと CloudFormation テンプレートを記述する上で統一的なルールを強要することができます。
+
+以下の例では、**Lambda 関数の定義に関数名と説明文が記載されているか** どうかを構文解析しています。
+
+```js title="template.test.js"
+const yaml = require("js-yaml");
+const fs = require("fs");
+const yamlCfn = require("yaml-cfn"); // CloudFormation の Yaml スキーマをサポート
+
+let template;
+beforeAll(async () => {
+  // テンプレートファイルのパス
+  const templatePath = path.join(__dirname, "./template.yaml");
+  // テンプレートファイルを読み込み
+  const input = fs.readFileSync(templatePath, "utf8");
+  // YAMLファイルをJavaScriptオブジェクトとして変換
+  template = yaml.safeLoad(input, { schma: yanlCfn.schma });
+});
+
+describe("yeah", () => {
+  test("Lambda関数の定義に関数名と説明文が記載されているか", () => {
+    for (const key in template) {
+      if (key === "Resources") {
+        for (const key in resources) {
+          if (resources[key]["Type"] === "AWS::Serverless::Function") {
+            expect(resources[key]["Properties"]).toHaveProperty("FunctionName");
+            expect(resources[key]["Properties"]).toHaveProperty("Description");
+          }
+        }
+      }
+    }
+  });
+});
+```
+
+これらの手法は **Policy as Code** と呼ばれ、リソースの命名規則以外にも、権限の設定誤りや漏れを防ぐことができます。
+
+## 2. 変更セットによる検証
+
+さて、CloudFormation テンプレートの静的構文解析（Linter）による検証が完了したら次に変更セットを作成できるか検証を行いましょう。
+awscli の [create-change-set](https://docs.aws.amazon.com/cli/latest/reference/cloudformation/index.html) コマンドを使用することで、変更セットを作成することができます。
+
+```bash
+$ aws cloudformation create-change-set \
+      --stack-name <your stack name> \
+      --template-body file://${pwd}/template.yaml \
+      --change-set-name <your change set name>
+```
+
+実際には以下のようなシェルスクリプトを作成しておくと便利でしょう。
+
+```bash title="create-change-set.sh"
+#!/bin/bash
+set -eu
+
+DATETIME=`date +%Y%m%d%H%M%S`;
+CHANGE_SET=changeset${DATETIME}${RANDOM};
+STACK_NAME=your-stack-name
+
+echo "[INFO] ${STACK_NAME} のスタックに対して、変更セットを作成します。"
+aws cloudformation create-change-set \
+      --stack-name ${STACK_NAME} \
+      --template-body file://${pwd}/template.yaml \
+      --change-set-name ${CHANGE_SET}
+```
+
+テンプレートのファイルサイズが大きい場合（51,200 bytes 以上）、`--template-body` オプションが使用できないことに注意しましょう。
+サイズが大きなテンプレートを使用する場合、ファイルを事前に S3 に配置しておく必要があります。
+S3 に配置したテンプレートファイルを読み込んで変更セットを作成することができます。
+
+```bash title="create-change-set.large.sh"
+#!/bin/bash
+set -eu
+
+DATETIME=`date +%Y%m%d%H%M%S`;
+CHANGE_SET=changeset${DATETIME}${RANDOM};
+STACK_NAME=your-stack-name
+
+BUCKET_NAME=your-bucket-name
+TEMPLATE_NAME=template.yaml
+
+echo "[INFO] ${STACK_NAME} のスタックに対して、変更セットを作成します。"
+aws s3 cp ./${TEMPLATE_NAME} s3://${BUCKET_NAME}/${TEMPLATE_NAME}
+aws cloudformation create-change-set \
+      --stack-name ${STACK_NAME} \
+      --template-url https://s3-ap-northeast-1.amazonaws.com/${BUCKET_NAME}/${TEMPLATE_NAME} \
+      --change-set-name ${CHANGE_SET}
+```
+
+## 3. 別リージョンへのデプロイ
+
+<img
+  height="100px"
+  src="https://raw.githubusercontent.com/aws-quickstart/taskcat/master/assets/docs/images/logo.png"
+  alt="taskcat"
+/>
+
+変更セットを作成するだけでは、正常に CloudFormation のスタックが更新されるか不安が残ります。
+実際にスタックを作成してみることでプロダクション環境に対して変更をかける安心を得ることができます。
+[Taskcat](https://github.com/aws-quickstart/taskcat) というツールを使用することで AWS にワークロードを自動的にデプロイする AWS CloudFormation テンプレートをテストできます。
+Taskcat は、AWS CloudFormation テンプレートを複数の AWS リージョンにデプロイし、各リージョンでデプロイが成功したかを検証します。
+
+#### インストール
+
+Taskcat は Python 製のツールです。pip3 を使用してインストールします。
+
+```bash
+$ pip3 install taskcat
+```
+
+#### 使用方法
+
+##### CLI
+
+Taskcat は cli コマンドを使用して実行します。
+
+```
+$ taskcat test run
+```
+
+##### 設定ファイル
+
+プロジェクトルートディレクトリに `.taskcat.yml` を作成することで、Taskcat の設定を行うことができます。
+詳細な設定方法は [GitHub リポジトリ](https://github.com/aws-quickstart/taskcat)を参照ください。以下は設定ファイルの例です。
+この設定ファイルでは、`us-west-2`, `eu-north-1` の 2 つのリージョンに対して `./templates/my-template.yaml` というファイル名の CloudFormation テンプレートをデプロイします。
+正常にデプロイされると、自動的にスタックは削除され、成功した結果が通知されます。
+
+```yml title=".taskcat.yml"
+project:
+  name: my-cfn-project
+  regions:
+    - us-west-2
+    - eu-north-1
+tests:
+  default:
+    template: ./templates/my-template.yaml
+```
+
+設定ファイルを明示的に指定する場合は以下のように実行します。
+
+```
+$ taskcat -c ./xxx/.taskcat.yml
+```
+
+todo
+
+## 本章のまとめ
+
+CloudFormation のテストとして３点紹介しました。
+
+1. **Linter による静的構文解析** <br/>
+2. **変更セットによる検証** <br/>
+3. **別リージョンへのデプロイ** <br/>
+
+上記のテストを CI パイプラインで実践するならば以下のようになります。Lint 系のテストは並列で実施して良いでしょう。
+
+<div style={{ textAlign: "center" }}>
+  <img alt="Docusaurus with Keytar" src={useBaseUrl("img/testing.svg")} />
+</div>
+
+別リージョンへのデプロイはある程度時間がかかるので、開発用の feature ブランチで毎回実行する/しないは、開発チームの方針に合わせて実践しましょう。
+
+例えば
+
+- master ブランチにマージすると プロダクション環境にデプロイされる。
+- develop ブランチにマージすると Taskcat が別リージョンに環境を作成し、問題がなければ削除する
+
+のようなブランチ戦略をとっても良いでしょうし、もっと慎重にプロダクション環境への適用を検討したいのであれば
+
+- master ブランチにマージすると プロダクション環境にデプロイされる。
+- develop ブランチにマージすると テスト環境にデプロイされる。
+- feature ブランチ（個人の開発用）にコミットがあると、Taskcat が別リージョンに環境を作成し問題がなければ削除する
+
+としても良いかと思います。開発組織に合った最適なブランチ戦略とテストを検討して下さい。
