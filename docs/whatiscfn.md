@@ -18,10 +18,10 @@ sidebar_label: AWS CloudFormation とは
 - 静的構文解析によるテスト
 
   - Linter
-    - cfn-python-lint
+    - `cfn-python-lint`
   - 脆弱性検知
     - cfn-nag
-  - 独自静的構文解析
+  - 静的構文解析
     - jest とかで
   - プリビルド的な話
     - TaskCat
