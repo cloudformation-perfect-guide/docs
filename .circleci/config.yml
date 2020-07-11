@@ -2,7 +2,7 @@ version: 2.1
 orbs:
   node: circleci/node@1.1.6
 jobs:
-  build:
+  build-and-lint:
     executor:
       name: node/default
     steps:
@@ -11,7 +11,8 @@ jobs:
           steps:
             - run: yarn install
             - run: yarn build
+            - run: textlint ./docs/*.md*
 workflows:
-  build:
+  build-and-lint:
     jobs:
-      - build
+      - build-and-lint
