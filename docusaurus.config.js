@@ -9,7 +9,13 @@ module.exports = {
   favicon: "img/favicon.png",
   organizationName: "cloudformation-perfect-guide",
   projectName: "docs",
+  plugins: ["@docusaurus/plugin-google-analytics"],
   themeConfig: {
+    googleAnalytics: {
+      trackingID: "G-9SJVFYM4KS",
+      // Optional fields.
+      anonymizeIP: true, // Should IPs be anonymized?
+    },
     image: "img/home.png",
     navbar: {
       title: "CloudFormation 完全ガイド",
