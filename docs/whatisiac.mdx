@@ -1,7 +1,7 @@
 ---
 id: whatisiac
-title: Infrastructure as Code
-sidebar_label: Infrastructure as Code
+title: Infrastructure as Code とは
+sidebar_label: Infrastructure as Code とは
 ---
 
 import useBaseUrl from "@docusaurus/useBaseUrl";
@@ -14,7 +14,7 @@ import useBaseUrl from "@docusaurus/useBaseUrl";
   <img alt="Docusaurus with Keytar" src={useBaseUrl("img/draw.png")} />
 </div>
 
-## Infrastructure as Code の原則
+## 📘 Infrastructure as Code の原則
 
 Infrastructure as Code の思想は以下の原則に従います。
 この原則から逸脱しているものは Infrastructure as Code ではなく、合理的に実装ができていない単なる自動化スクリプトです。
@@ -23,15 +23,19 @@ Infrastructure as Code をプロジェクトに導入する上では必ず以下
 :::note Infrastructure as Code の原則
 
 1. **簡単に再現できるシステムであること**<br/>
+
    ほとんどの作業が自動化されている状態である
 
 2. **使い捨てにできるシステムであること**<br/>
+
    変化に合わせて今あるものを除却/追加しやすい状態である
 
 3. **統一的なシステムであること**<br/>
+
    同じ役割をもつサーバがほとんど同じ状態である
 
 4. **反復できるプロセスであること** <br/>
+
    誰がいつやっても同じ状態をつくれる状態であること
 
 :::
@@ -54,7 +58,7 @@ IaC を導入する場合は、個々のリソースを削除し、容易に置�
 たとえば、１つの ALB(Application Load Balancer)のターゲットグループに２台の EC2 が登録されている構成を考えましょう。
 この２つの EC2 は IP アドレスのような個々を区別するような設定を除いて、ソフトウェア構成や設定は同一でなければいけません。
 たとえ一時的な設定変更だとしても、SSH でサーバにログインして設定変更をしてしまうと、すぐに全ての変更を管理できなくなることに気がつくでしょう。
-全ての変更は IaC を介して行われるべきで、複数のサーバに対して適用できるようにしておくことが求められます。
+全ての変更は IaC を介して行われるべきで、複数のサーバに対して 適用できるようにしておくことが求められます。
 
 ### 4. 反復できるプロセスであること
 

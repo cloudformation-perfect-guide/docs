@@ -1,0 +1,35 @@
+---
+id: whatiscfn
+title: AWS CloudFormationとは
+sidebar_label: AWS CloudFormationとは
+---
+
+import useBaseUrl from "@docusaurus/useBaseUrl";
+import styles from "./whatiscfn.module.css";
+
+AWS CloudFormation を利用することで、リソースの設定やプロビジョニングをコード化したテンプレートを作成できます。このテンプレートを使用することで、AWS の各種リソースを構築できます。
+
+参照：[AWS 公式ドキュメント](https://docs.aws.amazon.com/ja_jp/AWSCloudFormation/latest/UserGuide/Welcome.html)
+
+<div className={styles.img_wrap}>
+  <img alt="home" src={useBaseUrl("img/aws-cloudformation-cfn.png")} />
+</div>
+
+## ⛱ AWS CloudFormation の特徴
+
+### 1. インフラの管理や制御を簡単に
+
+AWS CloudFormation を利用することで、テスト環境・ステージング環境・本番環境で全く同じ設定のリソースをプロビジョニングできます。
+構築手順書を参照してコンソール画面からリソースを構築する必要はありません。
+CI/CD のパイプラインから CloudFormation の API を実行してリソースを構築することができます。
+
+### 2. インフラの制御や変更の追跡も簡単
+
+AWS CloudFormation は 変更セットを使用して変更されるリソースを変更前に確認できます。
+また、CloudTrail と統合することでリソースの変更履歴を確認することもできます。
+
+### 3. 無料
+
+AWS CloudFormation の利用料金は無料です。EC2 や RDS などのリソースの使用量で料金が発生します。
+
+さっそく次のページに進んで CloudFormation を利用してみましょう 💪

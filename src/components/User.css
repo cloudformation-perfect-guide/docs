@@ -1,0 +1,25 @@
+.img-wrapper {
+  border-radius: 10px;
+  border: solid 1px gray;
+  display: flex;
+}
+
+.img-wrapper img {
+  border-radius: 10px;
+  width: 150px;
+  height: 150px;
+  padding: 30px;
+}
+
+.img-wrapper .profile {
+  padding: 30px;
+}
+
+.img-wrapper .profile-name {
+  font-weight: 800;
+}
+.img-wrapper .profile-description {
+  padding-top: 30px;
+  font-style: gray;
+  font-weight: 100;
+}

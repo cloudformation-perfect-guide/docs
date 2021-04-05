@@ -1,5 +1,7 @@
 ---
 id: gettingStarted
-title: はじめの一歩
-sidebar_label: はじめの一歩
+title: チュートリアル 🐣
+sidebar_label: チュートリアル
 ---
+
+AWS CloudFormation を使用して VPC、サブネットを構築してみましょう。

@@ -1,12 +1,12 @@
 ---
 id: test
-title: テストを記述する
+title: テストを記述する 💊
 sidebar_label: テストを記述する
 ---
 
 import useBaseUrl from "@docusaurus/useBaseUrl";
 
-インフラを CloudFormation のテンプレートとして記述することができるようになり、デプロイする前からある程度インフラの品質を保証できるようになりました。
+インフラを CloudFormation のテンプレートとして記述できるようになり、デプロイする前からある程度インフラの品質を保証できるようになりました。
 強力でバランスがとれた自動テストを導入して、インフラリソースを継続的にデリバリーする準備を整えましょう。
 
 この章で紹介する CloudFormation におけるテストの方法は以下の３点です。
@@ -23,7 +23,7 @@ import useBaseUrl from "@docusaurus/useBaseUrl";
 :::note CloudFormation はクラウドリソースをどのレイヤーまで作成するか
 
 本ガイドでは、CloudFormation は EC2 の内部の OS/ミドルウェアまでは管理しない方針としており、いわゆる Serverspec などの自動テストとは異なる視点のテストを実践します。
-もちろん CloudFormation を使用しても EC2 の UserData を記述することで、OS/ミドルウェア の設定も行うことができます。ただ、OS 内部の設定の場合は、Ansible や Chef などのツールを使用する方がより適切な場合が多いでしょう。
+もちろん CloudFormation を使用しても EC2 の UserData を記述することで、OS/ミドルウェアの設定も行うことができます。ただ、OS 内部の設定の場合は、Ansible や Chef などのツールを使用する方がより適切な場合が多いでしょう。
 
 :::
 
@@ -90,7 +90,7 @@ $ docker run --rm -v `pwd`:/data cfn-python-lint:latest /data/template.yaml
 
 #### エディタプラグイン
 
-cfn-python-lint は コマンドラインで実行しても有効ですが、各種エディタのプラグインとして使用することでさらに威力を発揮します。
+cfn-python-lint はコマンドラインで実行しても有効ですが、各種エディタのプラグインとして使用することでさらに威力を発揮します。
 
 - [Atom](https://atom.io/packages/atom-cfn-lint)
 - [Emacs](https://www.emacswiki.org/emacs/CfnLint)
@@ -377,13 +377,13 @@ CloudFormation のテストとして３点紹介しました。
 
 例えば
 
-- master ブランチにマージすると プロダクション環境にデプロイされる。
+- master ブランチにマージするとプロダクション環境にデプロイされる。
 - develop ブランチにマージすると Taskcat が別リージョンに環境を作成し、問題がなければ削除する
 
 のようなブランチ戦略をとっても良いでしょうし、もっと慎重にプロダクション環境への適用を検討したいのであれば
 
-- master ブランチにマージすると プロダクション環境にデプロイされる。
-- develop ブランチにマージすると テスト環境にデプロイされる。
+- master ブランチにマージするとプロダクション環境にデプロイされる。
+- develop ブランチにマージするとテスト環境にデプロイされる。
 - feature ブランチ（個人の開発用）にコミットがあると、Taskcat が別リージョンに環境を作成し問題がなければ削除する
 
 としても良いかと思います。開発組織に合った最適なブランチ戦略とテストを検討して下さい。

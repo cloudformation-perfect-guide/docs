@@ -1,0 +1,46 @@
+---
+id: apigateway_lambda_recipe
+title: Create an Amazon API Gateway to AWS Lambda REST API
+---
+
+import { User } from "@site/src/components/User";
+
+## abst
+
+<img src="https://serverlessland.com/assets/images/patterns/patterns-apigw-lambda-cdk.png" />
+
+This pattern in CDK offers a boilerlate to generate an Amazon API Gateway REST API endpoint with a a greedy proxy ({proxy+}) and 'ANY' method from the specified path, meaning it will accept by default any method and any path. The Lambda function provided in TypeScript only returns the path.
+
+```ts
+import * as cdk from "@aws-cdk/core";
+import { ApiStack } from "./api/index";
+import { buildSync } from "esbuild";
+import path from "path";
+import config from "./api/config.json";
+
+buildSync({
+  bundle: true,
+  entryPoints: [path.resolve(__dirname, "api", "lambda", "index.ts")],
+  external: ["aws-sdk"],
+  format: "cjs",
+  outfile: path.join(__dirname, "api", "dist", "index.js"),
+  platform: "node",
+  sourcemap: true,
+  target: "node14.2",
+});
+
+const app = new cdk.App();
+const idStack = config.apiName;
+new ApiStack(app, `${idStack}Api`);
+```
+
+## Download
+
+```bash
+git clone https://github.com/aws-samples/serverless-patterns/
+cd serverless-patterns/apigw-lambda-cdk
+```
+
+---
+
+<User name="g-awa" description="xxx" />
