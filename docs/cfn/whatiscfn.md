@@ -4,43 +4,18 @@ title: AWS CloudFormationとは
 sidebar_label: AWS CloudFormationとは
 ---
 
-## (WIP) 骨子
+AWS CloudFormation を利用することで、リソースの設定やプロビジョニングをコード化したテンプレートを作成できます。このテンプレートを使用することで、AWS の各種リソースを構築できます。
 
-実践レベルで特によく使用する項目についてまとめる
+参照：[AWS公式ドキュメント](https://docs.aws.amazon.com/ja_jp/AWSCloudFormation/latest/UserGuide/Welcome.html)
 
-- 概要
-  - xxx
-- チュートリアル
-  - xxx
-- テンプレートの基礎
-  - テンプレートリファレンス（簡易版）
-  - AWS SAM
-  - あまり知られていない書き方レシピ
-- 静的構文解析によるテスト
+## AWS CloudFormationの特徴
 
-  - Linter
-    - `cfn-python-lint`
-  - 脆弱性検知
-    - cfn-nag
-  - 静的構文解析
-    - jest とかで
-  - プリビルド的な話
-    - TaskCat
-  - PullRequest 毎、コミット毎に change set を作成し、プレビューする
+1. インフラの管理や制御を簡単に
 
-- 継続的デリバリー
+2. インフラストラクチャの制御や変更の追跡も簡単
 
-  - 各種 CI ツールとの連携
-    - CircleCI
-    - GitHub Action
-  - テンプレート/デプロイの単位
-    - テンプレート間の値受け渡し方法
-      - 出力値のエクスポート
-      - パラメータとして引きつぐ（シェルで頑張る）
-      - Mapping にベタ書きする
-  - 障害や有事の際の考慮
-  - ドリフト対策
+3. 無料
 
-- レシピ集
-  - ALB 配下に EC2 を配置し、Web アクセスが可能な nginx をインストールする。
-  - etc...
+AWS CloudFormation の利用料金は無料です。EC2 や RDS などのリソースの使用量で料金が発生します。
+
+## xxx
