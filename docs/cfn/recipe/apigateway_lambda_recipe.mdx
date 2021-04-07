@@ -4,10 +4,16 @@ title: Create an Amazon API Gateway to AWS Lambda REST API
 ---
 
 import { User } from "@site/src/components/User";
+import { Tag } from "@site/src/components/Tag";
 
-## abst
+※ このページはテンプレートです。
+
 
 <img src="https://serverlessland.com/assets/images/patterns/patterns-apigw-lambda-cdk.png" />
+
+## Abstract
+
+<Tag category="aws cdk"/>
 
 This pattern in CDK offers a boilerlate to generate an Amazon API Gateway REST API endpoint with a a greedy proxy ({proxy+}) and 'ANY' method from the specified path, meaning it will accept by default any method and any path. The Lambda function provided in TypeScript only returns the path.
 
