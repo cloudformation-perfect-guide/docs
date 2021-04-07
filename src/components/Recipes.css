@@ -1,0 +1,32 @@
+.filter-container {
+  /* background-color: #da0d5f; */
+  border-radius: 5px;
+  border: solid 1px #606770;
+  /* color: white; */
+  font-weight: bold;
+  /* padding-right: 10px;
+  padding-left: 10px; */
+  margin-bottom: 10px;
+}
+
+.filter-header {
+  background-color: #606770;
+  color: white;
+  padding: 10px;
+}
+
+.filter-service-header {
+  padding: 10px;
+  color: #606770;
+}
+
+.filter-service-body {
+  padding: 0px 10px 10px 10px;
+  color: #606770;
+}
+
+.recipes-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
