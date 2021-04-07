@@ -61,9 +61,9 @@ export const Recipes = () => {
         <div className="filter-service-body">
           <form>
             {services.map((item, index) => (
-              <label htmlFor={`${item}`} key={`key_${index}`}>
+              <label htmlFor={`id_${item}`} key={`key_${index}`}>
                 <CheckBox
-                  id={item}
+                  id={`id_${item}`}
                   value={item}
                   onChange={handleChange}
                   checked={checkedItems[item.id]}
