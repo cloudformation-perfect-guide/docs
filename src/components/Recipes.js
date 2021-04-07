@@ -11,7 +11,7 @@ export const Recipes = () => {
       subTitle: "Create an Amazon API Gateway to AWS Lambda REST API",
     },
     {
-      to: "/docs/cfn/recipe/apigateway_lambda_recipe",
+      to: "/docs/cfn/recipe/cloudfront_to_s3_and_apigateway",
       imageUrl:
         "https://serverlessland.com/assets/images/patterns/cdk-cloudfront-to-s3-and-lambda.png",
       title: "CloudFront to S3 and API Gateway",
