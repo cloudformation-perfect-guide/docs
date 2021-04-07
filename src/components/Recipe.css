@@ -5,6 +5,7 @@
   align-items: center;
   border-radius: 10px;
   border: 0.5px solid gray;
+  height: 300px;
 }
 
 .recipe-architecture-image {
@@ -16,4 +17,11 @@
   padding-left: 30px;
   padding-bottom: 10px;
   padding-right: 30px;
+}
+
+.recipe-sub-title {
+  padding-left: 30px;
+  padding-bottom: 10px;
+  padding-right: 30px;
+  color: gray;
 }
