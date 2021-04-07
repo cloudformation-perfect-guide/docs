@@ -47,9 +47,7 @@ export const Recipes = () => {
     }
   };
 
-  const services = [
-    ...new Set(recipesData.map((recipe) => recipe.services).flat()),
-  ];
+  const services = ["apigateway", "s3", "cloudfront", "lambda"];
 
   return (
     <>
