@@ -1,6 +1,6 @@
 ---
 id: test
-title: テストを記述する 💊
+title: テストを記述する 🧪
 sidebar_label: テストを記述する
 ---
 
@@ -12,7 +12,7 @@ import useBaseUrl from "@docusaurus/useBaseUrl";
 この章で紹介する CloudFormation におけるテストの方法は以下の３点です。
 
 1. **Linter による静的構文解析** <br/>
-   YAML または JSON で記述されたテンプレートファイルが決められたポリシーに従っているかを検証する。
+   テンプレートファイルに構文エラーはないか、決められたポリシーに従っているか、セキュリティ的に脆弱な記述はないかを検証する。
 
 2. **変更セットによる検証** <br/>
    変更セットが作成されるか検証する。
@@ -33,7 +33,7 @@ import useBaseUrl from "@docusaurus/useBaseUrl";
 
 <img
   width="100px"
-  src="https://github.com/aws-cloudformation/cfn-python-lint/raw/master/logo.png?raw=true"
+  src="https://raw.githubusercontent.com/aws-cloudformation/cfn-lint/main/logo/cfn-lint-label.svg"
   alt="cfn-python-lint"
 />
 
@@ -357,8 +357,6 @@ tests:
 $ taskcat -c ./xxx/.taskcat.yml
 ```
 
-todo
-
 ## 本章のまとめ
 
 CloudFormation のテストとして３点紹介しました。
@@ -367,23 +365,4 @@ CloudFormation のテストとして３点紹介しました。
 2. **変更セットによる検証** <br/>
 3. **別リージョンへのデプロイ** <br/>
 
-上記のテストを CI パイプラインで実践するならば以下のようになります。Lint 系のテストは並列で実施して良いでしょう。
-
-<div style={{ textAlign: "center" }}>
-  <img alt="Docusaurus with Keytar" src={useBaseUrl("img/testing.svg")} />
-</div>
-
-別リージョンへのデプロイはある程度時間がかかるので、開発用の feature ブランチで毎回実行する/しないは、開発チームの方針に合わせて実践しましょう。
-
-例えば
-
-- master ブランチにマージするとプロダクション環境にデプロイされる。
-- develop ブランチにマージすると Taskcat が別リージョンに環境を作成し、問題がなければ削除する
-
-のようなブランチ戦略をとっても良いでしょうし、もっと慎重にプロダクション環境への適用を検討したいのであれば
-
-- master ブランチにマージするとプロダクション環境にデプロイされる。
-- develop ブランチにマージするとテスト環境にデプロイされる。
-- feature ブランチ（個人の開発用）にコミットがあると、Taskcat が別リージョンに環境を作成し問題がなければ削除する
-
-としても良いかと思います。開発組織に合った最適なブランチ戦略とテストを検討して下さい。
+次の章では、これらのテストをデリバリーのプロセスにどのように組み込むのか紹介します。
