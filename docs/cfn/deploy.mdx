@@ -1,0 +1,142 @@
+---
+id: deploy
+title: 継続的デリバリー 🚀
+sidebar_label: 継続的デリバリー
+---
+
+import useBaseUrl from "@docusaurus/useBaseUrl";
+
+前章では、CloudFormation のテストとして３点紹介しました。
+
+1. **Linter による静的構文解析** <br/>
+   テンプレートファイルに構文エラーはないか、決められたポリシーに従っているか、セキュリティ的に脆弱な記述はないかを検証する。
+
+2. **変更セットによる検証** <br/>
+   変更セットが作成されるか検証する。
+
+3. **別リージョンへのデプロイ** <br/>
+   別リージョンに全く同じ構成でデプロイができるか検証する。
+
+本章では、上記のテストを CI/CD パイプラインで実践する場合の具体的な設定方法、インフラの構築自動化もパイプラインに組み込む際のポイントについて説明します。
+
+## テストを CI/CD パイプラインで実践する
+
+CI/CD パイプラインで CloudFormation のテストを行う場合、ワークフローは以下のようになります。
+
+<div style={{ textAlign: "center", paddingTop: 30, paddingBottom: 30 }}>
+  <img alt="Docusaurus with Keytar" src={useBaseUrl("img/testing.png")} />
+</div>
+
+構文テスト・セキュリティテスト・ポリシーテストなどの静的構文解析のテストは並列で実施します。
+変更セットによる検証や別リージョンへのデプロイと比べると、検証時間が短いため一番初めに実施すると良いでしょう。
+
+別リージョンへのデプロイはある程度時間がかかるので、開発用の feature ブランチで毎回実行するかどうかは、開発チームの方針に合わせて決定しましょう。
+
+例えば以下のようなブランチ運用がオススメです。
+
+:::tip ブランチ運用（例１）
+
+- master ブランチにマージするとプロダクション環境にデプロイされる。
+- develop ブランチにマージすると Taskcat が別リージョンに環境を作成するテストを行う。
+
+:::
+
+:::tip ブランチ運用（例２）
+
+- master ブランチにマージするとプロダクション環境にデプロイされる。
+- develop ブランチにマージするとテスト環境にデプロイされる。
+- feature ブランチにコミットすると、Taskcat が別リージョンに環境を作成するテストを行う。
+
+:::
+
+開発組織に合った最適なブランチ戦略とテストを検討して下さい。
+
+## CI/CD パイプラインからインフラを自動構築する
+
+テストができたら、次は構築作業も CI/CD パイプラインで実施しましょう。基本的には bash などのシェルから、`aws cli` コマンドを実行してデプロイを行います。
+
+スタックの作成を行う [create-stack](https://docs.aws.amazon.com/cli/latest/reference/cloudformation/create-stack.html) や、
+変更セットを作成する [create-change-set](https://docs.aws.amazon.com/cli/latest/reference/cloudformation/create-change-set.html) コマンドなどが用意されていますが、
+CI/CD パイプラインから構築する場合、`deploy` を使用することをオススメします。
+このコマンドを実行すると、変更セットを作成してその変更セットを実行することでスタックを更新します。このコマンドを使用することで、**「変更セットを作成する」「変更セットを実行する」という作業を１度に実施できます。**
+
+```bash
+aws cloudformation deploy
+    --template /path_to_template/my-template.json
+    --stack-name my-new-stack
+    --parameter-overrides Key1=Value1 Key2=Value2
+```
+
+参考）
+
+- [AWS 公式ドキュメント](https://docs.aws.amazon.com/ja_jp/AWSCloudFormation/latest/UserGuide/cfn-using-cli.html)
+- [CLI オプション](https://docs.aws.amazon.com/cli/latest/reference/cloudformation/index.html)
+
+### よく使用される AWS CLI (CloudFormation) のコマンド
+
+AWS CLI の CloudFormation 関係のコマンドは多いですが、初めはまず以下を覚えておくだけで良いでしょう。
+
+| コマンド          | 概要                                         |
+| ----------------- | -------------------------------------------- |
+| create-stack      | スタックを新規作成する                       |
+| create-change-set | 既存のスタックに対し、変更セットを作成する   |
+| delete-stack      | スタックを削除する                           |
+| deploy            | 変更セットを作成してその変更セットを実行する |
+
+### CI サービスにおける設定方法
+
+それでは、各種 CI サービスから AWS CloudFormation のコマンドを実行して、リソースを構築・更新する方法を説明します。
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+<Tabs
+defaultValue="CircleCI"
+values={[{ label: "CircleCI", value: "CircleCI" },{ label: "GitHub Action", value: "github" }]}>
+
+  <TabItem value="CircleCI">
+
+CircleCI では [orbss/aws-cloudformation](https://circleci.com/developer/orbs/orb/orbss/aws-cloudformation) という Orbs が提供されています。
+これを使用することで少ないコード量で AWS へデプロイする CircleCI の設定を行うことができます。
+
+```yml title=".circleci/config.yml"
+version: 2.1
+
+orbs:
+  cloudformation: orbss/aws-cloudformation@0.1.6
+
+workflows:
+  version: 2
+  deploy:
+    jobs:
+      - cloudformation/deploy:
+          stack-name: "my-new-stack"
+          template-file-path: "/path_to_template/my-template.json"
+          extra-arguments: --no-fail-on-empty-changeset
+```
+
+ここで `extra-arguments: --no-fail-on-empty-changeset` を指定していることに注意しましょう。このオプションを指定することで、スタックの更新時に、テンプレートに変更がなかった場合でも、デプロイを失敗させないようにすることができます。
+
+  </TabItem>
+  <TabItem value="github">
+
+TODO...
+
+<div style={{ height: 500 }}></div>
+
+  </TabItem>
+
+</Tabs>
+
+### その他のツール
+
+最近では [Rain](https://github.com/aws-cloudformation/rain) というデプロイツールも登場しています。
+これは AWS CloudFormation のデプロイに特化したツールになっており、インタラクティブな操作ができることが特徴的です。
+
+参考）Rain の動作イメージ
+
+![Rainの動作イメージ](https://raw.githubusercontent.com/aws-cloudformation/rain/main/docs/rain.svg)
+
+参考）
+
+- [CloudFormation の CLI 実行ツール Rain がイケてそうなので紹介したい](https://dev.classmethod.jp/articles/aws-cloudformation-rain/)
