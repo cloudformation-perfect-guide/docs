@@ -9,7 +9,6 @@ module.exports = {
   favicon: "img/favicon.png",
   organizationName: "cloudformation-perfect-guide",
   projectName: "docs",
-  plugins: ["@docusaurus/plugin-google-analytics"],
   themeConfig: {
     googleAnalytics: {
       trackingID: "G-5FWWKQ11ML",
