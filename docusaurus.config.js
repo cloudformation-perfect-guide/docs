@@ -9,7 +9,6 @@ module.exports = {
   favicon: "img/favicon.png",
   organizationName: "cloudformation-perfect-guide",
   projectName: "docs",
-  plugins: ["@docusaurus/plugin-google-analytics"],
   themeConfig: {
     googleAnalytics: {
       trackingID: "G-5FWWKQ11ML",
@@ -23,7 +22,7 @@ module.exports = {
         alt: "Logo",
         src: "img/favicon.png",
       },
-      links: [
+      items: [
         {
           to: "docs/",
           activeBasePath: "docs",
@@ -80,7 +79,6 @@ module.exports = {
       "@docusaurus/preset-classic",
       {
         docs: {
-          homePageId: "home",
           sidebarPath: require.resolve("./sidebars.js"),
           editUrl:
             "https://github.com/cloudformation-perfect-guide/docs/edit/master",
