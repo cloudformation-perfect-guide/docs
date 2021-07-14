@@ -216,32 +216,24 @@ cfn-python-lint や cfn-nag を使用することで、テンプレートの品�
 テストコードを記述しておくと CloudFormation テンプレートを記述する上で統一的なルールを強要することができます。
 
 以下の例では、**Lambda 関数の定義に関数名と説明文が記載されているか** どうかを構文解析しています。
+[cloudformation-typescript-parser](https://github.com/daisuke-awaji/cloudformation-typescript-parser) を使用することで CloudFormation のテンプレートを TypeScript のオブジェクトとして取り扱うことができるようになります。
 
-```js title="template.test.js"
-const yaml = require("js-yaml");
-const fs = require("fs");
-const yamlCfn = require("yaml-cfn"); // CloudFormation の Yaml スキーマをサポート
+```ts title="template.test.ts"
+import { parseCfnFile } from "cloudformation-typescript-parser";
+import * as path from "path";
 
-let template;
-beforeAll(async () => {
-  // テンプレートファイルのパス
-  const templatePath = path.join(__dirname, "./template.yaml");
-  // テンプレートファイルを読み込み
-  const input = fs.readFileSync(templatePath, "utf8");
-  // YAMLファイルをJavaScriptオブジェクトとして変換
-  template = yaml.safeLoad(input, { schma: yanlCfn.schma });
-});
+describe("CloudFormation Template のテスト", () => {
+  test("Lambda関数の定義に関数名と説明文が記載されていること", async () => {
+    const template = await parseCfnFile(path.join(__dirname, "./template.yml"));
 
-describe("yeah", () => {
-  test("Lambda関数の定義に関数名と説明文が記載されているか", () => {
-    for (const key in template) {
-      if (key === "Resources") {
-        for (const key in resources) {
-          if (resources[key]["Type"] === "AWS::Serverless::Function") {
-            expect(resources[key]["Properties"]).toHaveProperty("FunctionName");
-            expect(resources[key]["Properties"]).toHaveProperty("Description");
-          }
-        }
+    for (const key in template.Resources) {
+      if (template.Resources[key].Type === "AWS::Serverless::Function") {
+        expect(template.Resources[key].Properties).toHaveProperty(
+          "FunctionName"
+        );
+        expect(template.Resources[key].Properties).toHaveProperty(
+          "Description"
+        );
       }
     }
   });
